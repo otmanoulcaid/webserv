@@ -2,12 +2,30 @@
 
 ServerEngine::ServerEngine(void)
 {
-    std::cout << "ServerEngine default constructor called\n";
+    std::cout << "ServerEngine default constructor appellé\n";
 }
 
 ServerEngine::~ServerEngine(void)
 {
-    std::cout << "ServerEngine destructor called\n";
+    std::cout << "ServerEngine destructor appellé\n";
+}
+
+
+ServerEngine(const ServerEngine& engine)
+{
+    std::cout << "copy constructor appellé" << std::endl;
+    *this = engine;
+}
+
+ServerEngine& operator=(const ServerEngine& engine)
+{
+    if (*this != engine)
+    {
+        this->maxEvents = engine.maxEvents;
+        this->epollFd = engine.epollFd;
+        // à implementer
+    }
+    return (*this)
 }
 
 ServerEngine::ServerEngine(int maxEvents)
@@ -16,7 +34,7 @@ ServerEngine::ServerEngine(int maxEvents)
     this->maxEvents = maxEvents;
     this->epollFd = epoll_create1(0);
     if (this->epollFd == -1) {
-        perror("Erreur lors de la création de l'instance epoll");
+        perror("Erreur lors de la creation de l'instance epoll");
         exit(1);
     }
 }
@@ -109,35 +127,32 @@ void    ServerEngine::acceptNewConnection(int serverFd)
         perror("Erreur lors de l'ajout du nouveau socket à epoll");
         close(newSocket);
     }
+    this->clients[newSocket] = Client(newSocket);
 }
 
 void    ServerEngine::handleClient(int clientFd)
 {
 
     char buffer[1024];
-    ssize_t bytes_read = read(clientFd, buffer, 20 - 1);
+    ssize_t bytes_read = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
     if (bytes_read == -1)
     {
         perror("Erreur de lecture");
         close(clientFd);
         epoll_ctl(this->epollFd, EPOLL_CTL_DEL, clientFd , NULL);
-    } else if (bytes_read == 0)
+    }
+    else if (bytes_read < sizeof(buffer) - 1) /*terminer la lecture de la requete*/
     {
-        // Le client a fermé la connexion
-        std::cout << "Connexion fermée par le client, socket fd: " << clientFd << std::endl;
+        //parser la requette
+        //envoyer la reponse
+        std::cout << "Client request: " << buffer << std::endl;
+        send(clientFd, "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!", 72, 0);
         close(clientFd);
         epoll_ctl(this->epollFd, EPOLL_CTL_DEL, clientFd, NULL);
     }
     else
     {
-        //!!! on doit chercher de client dans la liste des clients 
-        //pour concatener ce que nous avons lu et et verifier
-        // si le buffer de requette et terminer pour le parser
         buffer[bytes_read] = '\0';
-        std::cout << "Reçu: " << buffer;
-        send(clientFd, "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!", 72, 0);
-        std::string response = "Message reçu\n";
-        write(clientFd, response.c_str(), response.size());
+        this->clients[clientFd].appendBuffer(buffer);
     }
-    close(clientFd);
 }

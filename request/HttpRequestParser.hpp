@@ -1,12 +1,12 @@
-#ifndef __REQUEST_PARSER__
-# define __REQUEST_PARSER__
+#ifndef __HTTP_REQUEST_PARSER__
+# define __HTTP_REQUEST_PARSER__
 
 # include <iostream>
 # include <algorithm>
 # include <string>
 typedef std::string String;
 
-class RequestParser
+class HttpRequestParser
 {
 	private:
 		/*------------- attribute -------------*/
@@ -16,11 +16,11 @@ class RequestParser
 
 	public:
 		/*------------- Public Methods -------------*/
-		RequestParser(void);
-		RequestParser(const RequestParser& request);
-		RequestParser&   operator=(const RequestParser& request);
-		RequestParser(String& request);
-		~RequestParser(void);
+		HttpRequestParser(void);
+		HttpRequestParser(const HttpRequestParser& request);
+		HttpRequestParser&   operator=(const HttpRequestParser& request);
+		HttpRequestParser(String& request);
+		~HttpRequestParser(void);
 		void    setrequestContent(String& request);
 		// String& firstLine(void);
 		// String& nextLine(void);

@@ -1,8 +1,8 @@
 NAME = webserv
 
-SRCS = $(wildcard ./*.cpp)
+SRCS = $(wildcard ./*/*.cpp)
 
-HEADERS	= HttpRequest.hpp RequestParser.hpp
+HEADERS	= $(wildcard ./*/*.hpp)
 
 OBJS = $(SRCS:.cpp=.o)
 
@@ -10,7 +10,7 @@ CPP = g++
 
 NAME = webserv
 
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98
+CPPFLAGS = # -Wall -Wextra -Werror -std=c++98
 
 RM = rm -f
 
@@ -21,7 +21,7 @@ RED = "\033[31m"
 all : $(NAME)
 
 %.o : %.cpp $(HEADERS)
-	@$(CPP) -c $(CPPFLAGS) $<
+	@$(CPP) -c $(CPPFLAGS) $< -o $@
 
 $(NAME) : $(OBJS) $(HEADERS)
 	@$(CPP) $(CPPFLAGS) $(OBJS) -o $(NAME)

@@ -1,8 +1,7 @@
-#include "HttpRequest.hpp" 
-#include "RequestParser.hpp"
+#include "request/HttpRequestParser.hpp"
  
 int main()
 {
-    HttpRequest request(1);
+    HttpRequestParser request();
     return 0;
 }
