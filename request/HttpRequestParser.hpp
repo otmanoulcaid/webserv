@@ -1,36 +1,32 @@
 #ifndef __HTTP_REQUEST_PARSER__
 # define __HTTP_REQUEST_PARSER__
 
-# include <iostream>
-# include <algorithm>
-# include <string>
-typedef std::string String;
+
+#include "../webserv.hpp"
+#include "Client.hpp"
 
 class HttpRequestParser
 {
-	private:
-		/*------------- attribute -------------*/
-		String  requestContent;
-
-		/*------------- Private Methods -------------*/
+	public:
+		Client	*client;
 
 	public:
-		/*------------- Public Methods -------------*/
 		HttpRequestParser(void);
-		HttpRequestParser(const HttpRequestParser& request);
-		HttpRequestParser&   operator=(const HttpRequestParser& request);
-		HttpRequestParser(String& request);
 		~HttpRequestParser(void);
-		void    setrequestContent(String& request);
-		// String& firstLine(void);
-		// String& nextLine(void);
-		// String& getKey(void);
-		// String& getValue(void);
-		// int     validField(void);
-		// int     validKey(void);
-		// int     validValue(void);
-		// String& nextShunk(void);
-		// String& getBody(void);
+		HttpRequestParser(const HttpRequestParser& request);
+		HttpRequestParser&	operator=(const HttpRequestParser& request);
+		void				setClient(Client *client);
+		String				getFirstLine(void);
+		void				parseLineHeaders(void);
+		void				parseRequest(void);
+		void				parseFirstLine(String& line);
+		String				nextLine(void);
+		int    				parseHeaderLine(String& line);
+		int    				validKey(String& key);
+		int    				validValue(String& value);
+		int     			isChunked(void);
+		String&				nextShunk(void);
+		void				parseBody(void);
 };
 
 #endif

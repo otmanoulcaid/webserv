@@ -2,33 +2,35 @@
 
 ServerEngine::ServerEngine(void)
 {
-    std::cout << "ServerEngine default constructor appellé\n";
+    // std::cout << "ServerEngine default constructor appellé\n";
 }
 
 ServerEngine::~ServerEngine(void)
 {
-    std::cout << "ServerEngine destructor appellé\n";
+    // std::cout << "ServerEngine destructor appellé\n";
 }
 
 
-ServerEngine(const ServerEngine& engine)
+ServerEngine::ServerEngine(const ServerEngine& engine)
 {
-    std::cout << "copy constructor appellé" << std::endl;
+    // std::cout << "copy constructor appellé" << std::endl;
     *this = engine;
 }
 
-ServerEngine& operator=(const ServerEngine& engine)
+ServerEngine& ServerEngine::operator=(const ServerEngine& engine)
 {
-    if (*this != engine)
+    if (this != &engine)
     {
         this->maxEvents = engine.maxEvents;
         this->epollFd = engine.epollFd;
         // à implementer
     }
-    return (*this)
+    return (*this);
 }
 
-ServerEngine::ServerEngine(int maxEvents)
+ServerEngine::ServerEngine(int maxEvents) :
+maxEvents(maxEvents),
+epollFd(0)
 {
     std::cout << "ServerEngine Param constructor called\n";
     this->maxEvents = maxEvents;
@@ -93,23 +95,15 @@ void    ServerEngine::mainLoop(void)
         }
         for (int i = 0; i < num_fds; i++)
         {
-            if (this->isServer(events[i].data.fd)) // l'un de nos serveurs est pret pour accepter une nouvelle connection
+            if (std::find(this->serverFds.begin(), this->serverFds.end(),\
+                events[i].data.fd) != this->serverFds.end()) //check if the fd is a server socket
                 acceptNewConnection(events[i].data.fd);
                 //!!! ajouter ce nouveau client a la liste des clients
             else
                 //pour gerrer l'un des descripteurs de fichiers des clients
-                handleClient(events[i].data.fd);
+                readFromClient(events[i].data.fd);
         }
     }
-}
-
-int    ServerEngine::isServer(int fd)
-{
-    std::vector<int>::iterator it = this->serverFds.begin();
-    while (it != this->serverFds.end())
-        if (*it++ == fd)
-            return 1;
-    return 0;
 }
 
 void    ServerEngine::acceptNewConnection(int serverFd)
@@ -130,7 +124,7 @@ void    ServerEngine::acceptNewConnection(int serverFd)
     this->clients[newSocket] = Client(newSocket);
 }
 
-void    ServerEngine::handleClient(int clientFd)
+void    ServerEngine::readFromClient(int clientFd)
 {
 
     char buffer[1024];
@@ -141,18 +135,28 @@ void    ServerEngine::handleClient(int clientFd)
         close(clientFd);
         epoll_ctl(this->epollFd, EPOLL_CTL_DEL, clientFd , NULL);
     }
-    else if (bytes_read < sizeof(buffer) - 1) /*terminer la lecture de la requete*/
+    else if (bytes_read <= sizeof(buffer) - 1) /*terminer la lecture de la requete*/
     {
-        //parser la requette
-        //envoyer la reponse
-        std::cout << "Client request: " << buffer << std::endl;
-        send(clientFd, "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!", 72, 0);
-        close(clientFd);
-        epoll_ctl(this->epollFd, EPOLL_CTL_DEL, clientFd, NULL);
+        buffer[bytes_read] = '\0';
+        this->clients[clientFd].appendBuffer(buffer);
+        this->handleClient(clientFd);
     }
     else
     {
         buffer[bytes_read] = '\0';
         this->clients[clientFd].appendBuffer(buffer);
+        memset(buffer, sizeof(buffer), 0);
     }
+}
+
+void    ServerEngine::handleClient(int fd)
+{
+        //parser la requette
+    requestParser.setClient(&clients[fd]);
+    requestParser.parseRequest();
+        //envoyer la reponse
+    send(fd, "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!", 72, 0);
+        // std::cout << "Client request: " << this->clients[fd].getBuffer() << std::endl;
+    close(fd);
+    epoll_ctl(this->epollFd, EPOLL_CTL_DEL, fd, NULL);
 }

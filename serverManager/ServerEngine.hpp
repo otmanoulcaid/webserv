@@ -3,14 +3,12 @@
 # include "Server.hpp"
 # include "../request/Client.hpp"
 # include "../request/HttpRequestParser.hpp" 
+# include "../webserv.hpp"
 
 # include <sys/epoll.h>
-# include <unistd.h>
 # include <arpa/inet.h>
-# include <cstring>
-# include <vector>
-# include <map>
-# include <iostream>
+# include <unistd.h>
+# include <fcntl.h>
 
 # define MAX_EVENTS 10  // nombre maximum d'événements à gérer simultanément
                         // à récupérer de la config
@@ -27,7 +25,7 @@ class ServerEngine
         int                     maxEvents;
         std::vector<int>        serverFds; 
         std::map<int, Client>   clients; // map des clients pour localiser le client par son fd 
-        HttpRequestParser       parser;
+        HttpRequestParser       requestParser;
         //HttpResponse            Response;
 
     public:
@@ -39,9 +37,9 @@ class ServerEngine
         void    setupServers(Servers &servers);
         int     setupServer(Server &server);
         void    mainLoop(void);
-        int     isServer(int fd);
         void    acceptNewConnection(int serverFd);
-        void    handleClient(int clientFd);
+        void    readFromClient(int clientFd);
+        void    handleClient(int fd);
 };
 
 #endif
