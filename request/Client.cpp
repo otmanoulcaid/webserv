@@ -12,7 +12,6 @@ status(200)
 {
 }
 
-
 Client::~Client()
 {
 }
@@ -29,7 +28,7 @@ Client& Client::operator=(const Client& client)
 	return *this; 
 }
 
-void	setStatus(short status)
+void	Client::setStatus(short status)
 {
 	this->status = status;
 }
@@ -79,14 +78,14 @@ void Client::setBody(String body)
 	this->requestBody = body;  // Set the body of the request
 }
 
-String	Client::getHeader(String& key)
+String	Client::getHeader(String key)
 {
 	if (headers.find(key) != headers.end())
 		return headers[key];
 	return "";
 }
 
-void Client::setHeader(String&key, String& value)
+void Client::setHeader(String key, String value)
 {
 	this->headers[key] = value;  // Set the headers map
 }

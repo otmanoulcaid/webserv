@@ -32,8 +32,8 @@ class Client
 		void                        setBuffer(String buffer);
 		String                      getPath(void);
 		void                        setPath(String path);
-		String					    getHeader(String& key);
-		void                        setHeader(String& key, String& value);
+		String					    getHeader(String key);
+		void                        setHeader(String key, String value);
 		std::map<String, String>    getQueryVars(void);
 		void                        setQueryVars(std::map<String, String>& query);
 };

@@ -25,7 +25,7 @@ class HttpRequestParser
 		int    				validKey(String& key);
 		int    				validValue(String& value);
 		int     			isChunked(void);
-		String&				nextShunk(void);
+		String				nextShunk(void);
 		void				parseBody(void);
 };
 

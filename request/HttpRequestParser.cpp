@@ -47,7 +47,7 @@ void HttpRequestParser::parseRequest()
 	parseFirstLine(line);
 	while (!(line = this->nextLine()).empty() && client->getStatus() == 200)
 	{
-		std::cout << RED << line << RESET << std::endl;
+		std::cout << BLUE << line << RESET << std::endl;
 		parseLineHeaders();
 	}
 }
@@ -108,7 +108,7 @@ int     HttpRequestParser::isChunked(void)
 	return 0;
 }
 
-String& HttpRequestParser::nextShunk(void)
+String	HttpRequestParser::nextShunk(void)
 {
 	size_t pos = client->getBuffer().find("\r\n");
 	if (pos == std::string::npos)

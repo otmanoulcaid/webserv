@@ -40,4 +40,10 @@ fclean : clean
 
 re : fclean all
 
-.PHONY : clean
+#make push COMMIT="custom msg"
+push :
+	@git add .
+	@git commit -m "${COMMIT}"
+	@git push -f
+
+.PHONY : clean push
