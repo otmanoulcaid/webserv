@@ -34,30 +34,21 @@ epollFd(0)
 {
     std::cout << "ServerEngine Param constructor called\n";
     this->maxEvents = maxEvents;
-    this->epollFd = epoll_create1(0);
-    if (this->epollFd == -1) {
-        perror("Erreur lors de la creation de l'instance epoll");
-        exit(1);
-    }
 }
 
 void    ServerEngine::setupServers(Servers &servers)
-{       
+{
     for (Servers::iterator it = servers.begin(); it != servers.end(); ++it)
     {
-        this->event.data.fd = setupServer(*it);
-        if (event.data.fd == -1) {
+        int server_fd = setupServer(*it);
+        if (server_fd == -1) {
             perror("Erreur lors de la récupération du socket du serveur");
-            close(this->epollFd);
             exit(1);
         }
-        this->event.events = EPOLLIN;
-        if (epoll_ctl(this->epollFd, EPOLL_CTL_ADD, this->event.data.fd, &this->event) == -1) {
-            perror("Erreur lors de l'ajout du serveur à epoll");
-            close(this->event.data.fd);
-            close(this->epollFd);
-            exit(1);
-        }
+        pollfd pfd;
+        pfd.fd = server_fd;
+        pfd.events = POLLIN;
+        events.push_back(pfd);
     }
 }
 
@@ -81,60 +72,55 @@ int    ServerEngine::setupServer(Server &server)
     return serverFd;
 }
 
+
+//poll return the number of events (file descriptors) ready for reading or wrriting
 void    ServerEngine::mainLoop(void)
 {
     std::cout << "\33[32m" << "WEBSERV waiting for connection...\n" << "\33[0m";
-    std::vector<struct epoll_event> events(this->maxEvents);
     while (true)
     {
-        int num_fds = epoll_wait(this->epollFd, events.data(), MAX_EVENTS, -1);
+        int num_fds = poll(events.data(), events.size(), -1);
         if (num_fds == -1)
         {
-            perror("Erreur lors de epoll_wait");
+            perror("Erreur lors de poll");
             continue;
         }
-        for (int i = 0; i < num_fds; i++)
+        for (size_t i = 0; i < this->events.size() && num_fds > 0; ++i)
         {
-            if (std::find(this->serverFds.begin(), this->serverFds.end(),\
-                events[i].data.fd) != this->serverFds.end()) //check if the fd is a server socket
-                acceptNewConnection(events[i].data.fd);
-                //!!! ajouter ce nouveau client a la liste des clients
-            else
-                //pour gerrer l'un des descripteurs de fichiers des clients
-                readFromClient(events[i].data.fd);
+            if (events[i].revents & POLLIN)
+            { 
+                if (std::find(this->serverFds.begin(), this->serverFds.end(), events[i].fd)\
+                    != this->serverFds.end())
+                    acceptNewConnection(events[i].fd);
+                else
+                    readFromClient(this->events[i].fd);
+                num_fds--;
+            }
         }
     }
 }
 
-void    ServerEngine::acceptNewConnection(int serverFd)
+void ServerEngine::acceptNewConnection(int serverFd)
 {
     int newSocket = accept(serverFd, NULL, NULL);
     if (newSocket == -1)
     {
         perror("Erreur lors de l'accept");
-        return ;
+        return;
     }
-    this->event.data.fd = newSocket;
-    this->event.events = EPOLLIN;
-    if (epoll_ctl(this->epollFd, EPOLL_CTL_ADD, newSocket, &this->event) == -1)
-    {
-        perror("Erreur lors de l'ajout du nouveau socket à epoll");
-        close(newSocket);
-    }
+    pollfd clientFd;
+    clientFd.fd = newSocket;
+    clientFd.events = POLLIN;
+    this->events.push_back(clientFd);
     this->clients[newSocket] = Client(newSocket);
 }
 
 void    ServerEngine::readFromClient(int clientFd)
 {
-
     char buffer[1024];
     ssize_t bytes_read = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
     if (bytes_read == -1)
-    {
         perror("Erreur de lecture");
-        close(clientFd);
-        epoll_ctl(this->epollFd, EPOLL_CTL_DEL, clientFd , NULL);
-    }
     else if (bytes_read <= sizeof(buffer) - 1) /*terminer la lecture de la requete*/
     {
         buffer[bytes_read] = '\0';
@@ -155,8 +141,12 @@ void    ServerEngine::handleClient(int fd)
     requestParser.setClient(&clients[fd]);
     requestParser.parseRequest();
         //envoyer la reponse
-    send(fd, "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!", 72, 0);
-        // std::cout << "Client request: " << this->clients[fd].getBuffer() << std::endl;
-    close(fd);
-    epoll_ctl(this->epollFd, EPOLL_CTL_DEL, fd, NULL);
+    const char* response = "HTTP/1.1 200 OK\n"
+                        "Content-Type: text/html\n"
+                        "Content-Length: 21\n"
+                        "Connection: keep-alive\n\n"
+                        "<h1>Hello world!</H1>"; //hh khdama wakha hakkak <h1></H1>
+    send(fd, response, strlen(response), 0);
+    // close(fd); //si le client want to let the socket open for future connections sinon on ferme le fd
+    std::cout << CYAN << " response sent to client " << RESET << fd << std::endl;
 }

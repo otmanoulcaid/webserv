@@ -99,4 +99,3 @@ std::map<String, String> Client::getQueryVars(void)
 {
 	return this->queryVars;
 }
-
