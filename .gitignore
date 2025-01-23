@@ -1,0 +1,44 @@
+# Prerequisites
+*.d
+
+cgi-bin
+
+.logs
+tester
+webserv
+cgi_tester
+prog
+i
+o
+j
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+*.out
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
