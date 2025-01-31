@@ -1,11 +1,9 @@
 
-#include "../ServerManager/ServerManager.hpp"
-
-ServerManager *webservP = NULL;
+#include "ServerManager/ServerManager.hpp"
 
 void f()
 {
-	int fd = open(".logs/sds.log", O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	int fd = open(".log", O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if (-1 == fd)
 	{
 		wsu::terr(String(" .logs/sds.log cannot be opened"));
@@ -22,7 +20,7 @@ void f()
 
 void signalHandler(int signal)
 {
-	if (signal == SIGINT)
+	if (signal == SIGINT || signal == SIGPIPE)
 	{
 		std::cout << "exiting\n";
 		Core::up = false;
@@ -33,6 +31,7 @@ int main(int ac, char **av)
 {
 	atexit(f);
 	signal(SIGINT, signalHandler);
+	signal(SIGPIPE, signalHandler);
 	std::vector<String> args;
 	for (int i = 1; i < ac; ++i)
 		args.push_back(String(av[i]));
