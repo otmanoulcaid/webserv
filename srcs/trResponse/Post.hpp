@@ -3,8 +3,8 @@
 
 
 #include "RessourceExplorer.hpp"
-#include "Response.hpp"
-class Post : public Response
+
+class Post
 {
 	private:
 		Request 					&request;

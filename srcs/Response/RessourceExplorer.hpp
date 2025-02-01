@@ -2,7 +2,7 @@
 
 # include "../Request/Request.hpp"
 
-class RessourceHandler
+class RessourceExplorer
 {
 	private:
 		void			loadType(const char* path);
@@ -16,10 +16,10 @@ class RessourceHandler
 		void			loadPathExploring(const String& uri);
 		void			prepareRessource(Location& location, const String& uri);
 
-		RessourceHandler();
-		RessourceHandler(const RessourceHandler &copy);
-		RessourceHandler &operator=(const RessourceHandler &assign);
-		~RessourceHandler();
+		RessourceExplorer();
+		RessourceExplorer(const RessourceExplorer &copy);
+		RessourceExplorer &operator=(const RessourceExplorer &assign);
+		~RessourceExplorer();
 };
 
-std::ostream &operator<<(std::ostream &o, RessourceHandler const &r);
+std::ostream &operator<<(std::ostream &o, RessourceExplorer const &r);

@@ -12,13 +12,9 @@ class Connection
 		int								__sd;
 		BasicString						__data;
 		Request							__request;
-		Response						*__response;
+		Response						__response;
 		t_Server						*__serversP;
-		t_connection_phase			__phase;
-		RessourceExplorer				explorer;
-
-		bool 							checkCgi();
-		Response*						responseFactory();
+		t_connection_phase				__phase;
 
 		Server							*identifyServer();
 		void							processRequest();

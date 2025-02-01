@@ -2,18 +2,17 @@ SRC		=	srcs/main.cpp \
 			srcs/Request/Connection.cpp \
 			srcs/Request/Headers.cpp \
 			srcs/Request/Request.cpp \
-			srcs/Response/Cgi.cpp \
 			srcs/Response/ErrorResponse.cpp \
 			srcs/Response/Get.cpp \
-			srcs/Response/Post.cpp \
 			srcs/Response/Response.cpp \
-			srcs/Response/RessourceHandler.cpp \
+			srcs/Response/RessourceExplorer.cpp \
 			srcs/ServerManager/Core.cpp \
 			srcs/ServerManager/Location.cpp \
 			srcs/ServerManager/Server.cpp \
 			srcs/ServerManager/ServerManager.cpp \
 			srcs/utilities/BasicString.cpp \
 			srcs/utilities/WSU.cpp 
+
 
 OBJ		=	$(SRC:.cpp=.o)
 NAME	=	webserv
@@ -26,12 +25,10 @@ $(NAME): $(OBJ)
 %.o: %.cpp	srcs/Request/Connection.hpp \
 			srcs/Request/Headers.hpp \
 			srcs/Request/Request.hpp \
-			srcs/Response/Cgi.hpp \
 			srcs/Response/ErrorResponse.hpp \
 			srcs/Response/Get.hpp \
-			srcs/Response/Post.hpp \
 			srcs/Response/Response.hpp \
-			srcs/Response/RessourceHandler.hpp \
+			srcs/Response/RessourceExplorer.hpp \
 			srcs/ServerManager/Core.hpp \
 			srcs/ServerManager/Location.hpp \
 			srcs/ServerManager/Server.hpp \

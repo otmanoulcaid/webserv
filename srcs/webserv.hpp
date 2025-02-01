@@ -39,6 +39,27 @@
 # define TIMEOUT 6
 #endif
 
+
+#include "srcs/Request/Connection.hpp"
+#include "srcs/Response/RessourceExplorer.hpp"
+#include "srcs/Request/Headers.hpp"
+#include "srcs/ServerManager/Core.hpp"
+#include "srcs/Request/Request.hpp"
+#include "srcs/ServerManager/Location.hpp"
+#include "srcs/Response/Cgi.hpp"
+#include "srcs/ServerManager/Server.hpp"
+#include "srcs/Response/ErrorResponse.hpp"
+#include "srcs/ServerManager/ServerManager.hpp"
+#include "srcs/utilities/BasicString.hpp"
+#include "srcs/Response/Get.hpp"
+#include "srcs/utilities/WSU.hpp"
+#include "srcs/Response/Post.hpp"
+#include "srcs/Response/Response.hpp"
+
+
+
+
+
 #ifndef JAVABIN
 #define JAVABIN "/usr/bin/java"
 #endif

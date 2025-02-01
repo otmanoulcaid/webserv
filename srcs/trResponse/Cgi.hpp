@@ -3,7 +3,7 @@
 
 # include "Get.hpp"
 
-class Cgi : public Response
+class Cgi
 {
 	private:
 		Request&				__request;

@@ -2,7 +2,7 @@
 
 Connection::Connection() : __sd(-1),
 						   __request(__phase),
-						   __response(NULL),
+						   __response(__phase, __request),
 						   __serversP(NULL),
 						   __phase(PROCESSING_REQUEST)
 {
@@ -10,7 +10,7 @@ Connection::Connection() : __sd(-1),
 }
 Connection::Connection(int sd) : __sd(sd),
 								 __request(__phase),
-								 __response(NULL),
+								 __response(__phase, __request),
 								 __serversP(NULL),
 								 __phase(PROCESSING_REQUEST)
 {
@@ -67,37 +67,12 @@ Server *Connection::identifyServer()
 		return this->__serversP->begin()->second;
 	return tmpMapH.at(0);
 }
-
-bool Connection::checkCgi(RessourceExplorer explorer)
-{
-	if (__location.__cgiPass.empty())
-		return 0;
-	if (explorer.__type == FOLDER)
-		return 0;
-	if (!wsu::endWith(explorer.__fullPath, ".java") && !wsu::endWith(explorer.__fullPath, ".php"))
-		return 0;
-	return 1;
-}
-
-Response	*responseFactory(Server* server, Location& location)
-{
-	// if (checkCgi())
-	// 	return new myCgi();
-	// if (__request.__method == POST)
-	// 	return new myPost(location, server);
-	if (__request.__method == GET)
-		return new myGet();
-// 	if (__request.__method == DELETE)
-// 		return new myDelete();
-}
-
 void Connection::identifyWorkers()
 {
     wsu::info("identifying workers");
 	Server *server = identifyServer();
 	Location &location = server->identifyLocation(__request.__URI);
-	explorer = RessourceExplorer(location, __request.__URI);	
-	__response = this->responseFactory(server, location);
+	__response.setupWorkers(*server, location);
 	this->__phase = PROCESSING_RESPONSE;
 }
 /**********************************************************************************
@@ -121,15 +96,7 @@ void Connection::processData()
 		if (__phase == IDENTIFY_WORKERS)
 			identifyWorkers();
 		if (__phase == PROCESSING_RESPONSE)
-		{
-			BasicString response = __response->getResponse(__data);
-			this->__responseQueue.push(response);
-		}
-		if (__response->__state)
-		{
-			delete __response;
-			__response = NULL;
-		}
+			__response.processData(__data);
 	}
 	catch (ErrorResponse &e)
 	{
