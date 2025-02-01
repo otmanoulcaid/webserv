@@ -1,7 +1,7 @@
 #ifndef __WSU_HPP__
 #define __WSU_HPP__
 
-#include "../webserv.hpp"
+# include "../webserv.hpp"
 
 class wsu
 {

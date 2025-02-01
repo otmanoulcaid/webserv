@@ -1,9 +1,12 @@
 #ifndef __GET_HPP__
 #define __GET_HPP__
 
-#include "Response.hpp"
 #include "Post.hpp"
+#include "Response.hpp"
 
+// # include "../webserv.hpp"
+
+class Response;
 class Get : public Response
 {
 	public:

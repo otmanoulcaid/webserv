@@ -32,7 +32,7 @@ Get::~Get()
     wsu::info("Get Destructor");
 }
 
-BasicString getResponse(BasicString& data)
+void getResponse(BasicString& in, BasicString& out)
 {
 	std::string http_response = "HTTP/1.1 200 OK\r\n";
     http_response += "Content-Type: text/plain\r\n";

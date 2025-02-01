@@ -1,5 +1,6 @@
 #pragma once
 
+// # include "../webserv.hpp"
 #include "Cgi.hpp"
 
 class Response
@@ -18,5 +19,6 @@ class Response
 		Response& operator=(const Response& other);
 		Response(Location& location, RessourceExplorer explorer, Request& request, Server& server);
 		
-		virtual BasicString getResponse(BasicString& data) = 0;
+		virtual void getResponse(BasicString& in, BasicString& out) = 0;
+		// virtual void getResponse(BasicString& data) = 0;
 };

@@ -4,6 +4,9 @@
 
 #include "RessourceExplorer.hpp"
 #include "Response.hpp"
+// # include "../webserv.hpp"
+
+class Response;
 class Post : public Response
 {
 	private:

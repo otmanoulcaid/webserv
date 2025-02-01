@@ -1,7 +1,9 @@
 #ifndef __SERVER_HPP__
 # define __SERVER_HPP__
 
+// # include "../webserv.hpp"
 # include "Location.hpp"
+# include "../Request/Connection.hpp"
 
 class Server
 {

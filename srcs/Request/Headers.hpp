@@ -2,6 +2,7 @@
 # define __HEADERS_HPP__
 
 # include "../Response/ErrorResponse.hpp"
+// # include "../webserv.hpp"
 
 class Headers
 {

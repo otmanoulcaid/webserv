@@ -1,7 +1,8 @@
 #ifndef __CONNECTION_HPP__
 # define __CONNECTION_HPP__
 
-# include "../Response/Response.hpp"
+# include "Request.hpp"
+# include "../utilities/BasicString.hpp"
 
 typedef std::map< int, Server* >			t_Server;
 typedef std::vector< Server * >				t_serVect;

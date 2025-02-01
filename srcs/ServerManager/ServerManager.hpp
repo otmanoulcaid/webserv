@@ -1,7 +1,8 @@
 #ifndef __SERVERMANAGER_HPP__
 # define __SERVERMANAGER_HPP__
 
-# include "Core.hpp"
+# include "../webserv.hpp"
+# include "Server.hpp"
 
 /*************************************************************************
  *                             SERVER PARSER                             *

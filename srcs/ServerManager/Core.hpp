@@ -1,5 +1,7 @@
 #ifndef __CORE_HPP__
 # define __CORE_HPP__
+
+
 #include "../Request/Connection.hpp"
 
 typedef std::map< int, Connection* >		t_Connections;

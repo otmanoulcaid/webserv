@@ -122,8 +122,8 @@ void Connection::processData()
 			identifyWorkers();
 		if (__phase == PROCESSING_RESPONSE)
 		{
-			BasicString response = __response->getResponse(__data);
-			this->__responseQueue.push(response);
+			// __response->getResponse(__data);
+			// this->__responseQueue.push();
 		}
 		if (__response->__state)
 		{

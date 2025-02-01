@@ -1,7 +1,8 @@
 #ifndef __LOCATION_HPP__
 # define __LOCATION_HPP__
 
-# include "../utilities/BasicString.hpp"
+// # include "../utilities/BasicString.hpp"
+# include "../webserv.hpp"
 
 class Location
 {
